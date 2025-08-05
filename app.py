@@ -4,21 +4,30 @@ from googleapiclient.discovery import build
 import os
 from dotenv import load_dotenv
 
-# Load environment variables
-# load_dotenv()
-GEMINI_API_KEY =  os.environ.get("GEMINI_API_KEY")
-YOUTUBE_API_KEY =  os.environ.get("YOUTUBE_API_KEY")
+load_dotenv()
+# Get environment variables
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_API_KEY_BACKUP = os.environ.get("GEMINI_API_KEY_BACKUP")
+YOUTUBE_API_KEY = os.environ.get("YOUTUBE_API_KEY")
 
-# Configure Gemini
+# Configure primary Gemini
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
-# Gemini function
+# Gemini function with fallback
 def get_gemini_answer(question):
     try:
         response = model.generate_content(question)
         return response.text
     except Exception as e:
+        if GEMINI_API_KEY_BACKUP:
+            try:
+                genai.configure(api_key=GEMINI_API_KEY_BACKUP)
+                backup_model = genai.GenerativeModel("gemini-1.5-flash")
+                response = backup_model.generate_content(question)
+                return f"(Using Backup API)\n{response.text}"
+            except Exception as backup_e:
+                return f"❌ Error from Gemini (Backup failed too): {backup_e}"
         return f"❌ Error from Gemini: {e}"
 
 # YouTube function
@@ -85,7 +94,7 @@ if st.button("🔍 Get Answer"):
             gemini_response = get_gemini_answer(question)
             youtube_response = get_youtube_video_link(question)
 
-        # Answer section
+        # Gemini answer
         st.markdown('<div class="card">', unsafe_allow_html=True)
         st.markdown("### 🤖 Gemini Answer")
         st.write(gemini_response)
