@@ -5,9 +5,9 @@ import os
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
+# load_dotenv()
+GEMINI_API_KEY =  os.environ.get("GEMINI_API_KEY")
+YOUTUBE_API_KEY =  os.environ.get("YOUTUBE_API_KEY")
 
 # Configure Gemini
 genai.configure(api_key=GEMINI_API_KEY)
