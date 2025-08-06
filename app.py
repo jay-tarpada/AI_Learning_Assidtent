@@ -76,7 +76,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Sidebar
-st.sidebar.markdown("## 🧠 Gemini + YouTube Assistant")
+st.sidebar.markdown("## 🧠 AI Agent for Study")
 st.sidebar.markdown("Ask any academic or general question and get an AI-powered answer along with a helpful YouTube video!")
 
 # Main Title
